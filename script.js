@@ -1,37 +1,32 @@
-let isFetching = false; // Evita múltiplas requisições ao mesmo tempo
+const API_URL = "https://seuservidor.com/dados.json"; // Substitua pelo endereço da sua API hospedada
 
-async function fetchCharacterData() {
-    if (isFetching) return; // Impede que a função rode se já estiver executando
-    isFetching = true;
-
+async function carregarDados() {
     try {
-        const response = await fetch("https://crisordemparanormal.com/agente/stream/VDUU6qfqHMJPSbiAaFc9");
-        const html = await response.text();
+        const response = await fetch(API_URL);
+        if (!response.ok) {
+            throw new Error(`Erro ao buscar dados: ${response.status}`);
+        }
 
-        // Parse o HTML recebido
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, "text/html");
-
-        // Extração de dados dinâmicos
-        const nome = doc.querySelector('.character-stream-profile-name')?.innerText || "Não encontrado";
-        const sanidade = doc.querySelector('.character-stream-bar-value-san')?.innerText || "Não encontrado";
-        const vida = doc.querySelector('.character-stream-bar-value-pv')?.innerText || "Não encontrado";
-        const esforco = doc.querySelector('.character-stream-pe-value')?.innerText || "Não encontrado";
-        const foto = doc.querySelector('.character-stream-profile-picture')?.src || "";
-
-        // Atualizar o DOM com os dados
-        document.getElementById("nome").textContent = nome;
-        document.getElementById("sanidade").textContent = sanidade;
-        document.getElementById("vida").textContent = vida;
-        document.getElementById("esforco").textContent = esforco;
-        document.getElementById("foto").src = foto;
+        const data = await response.json();
+        exibirDados(data);
     } catch (error) {
-        console.error("Erro ao buscar os dados:", error);
-        document.getElementById("nome").textContent = "Erro ao carregar os dados.";
-    } finally {
-        isFetching = false;
+        console.error("Erro ao carregar os dados:", error);
+        document.getElementById("agentes").innerHTML = `<p>Erro ao carregar os dados.</p>`;
     }
 }
 
-setInterval(fetchCharacterData, 5000); // Atualiza a cada 5 segundos
-fetchCharacterData(); // Primeira execução
+function exibirDados(data) {
+    const agentesDiv = document.getElementById("agentes");
+    agentesDiv.innerHTML = "";
+
+    Object.keys(data).forEach((key) => {
+        const valor = data[key];
+        const elemento = document.createElement("p");
+        elemento.textContent = `${key}: ${valor}`;
+        agentesDiv.appendChild(elemento);
+    });
+}
+
+// Atualiza os dados a cada 5 segundos
+setInterval(carregarDados, 5000);
+carregarDados();

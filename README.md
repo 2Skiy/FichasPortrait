@@ -1,0 +1,1 @@
+oie olha as fichas

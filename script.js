@@ -1,6 +1,5 @@
 async function fetchCharacterData() {
     try {
-        // URL do site do Cris (pode ser alterada)
         const response = await fetch("https://crisordemparanormal.com/agente/stream/VDUU6qfqHMJPSbiAaFc9");
         const html = await response.text();
 
@@ -26,6 +25,6 @@ async function fetchCharacterData() {
     }
 }
 
-// Recarregar os dados a cada 5 segundos para simular atualizações dinâmicas
+// Atualizar os dados a cada 5 segundos
 setInterval(fetchCharacterData, 5000);
 fetchCharacterData();

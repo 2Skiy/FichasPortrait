@@ -1,6 +1,12 @@
 async function fetchCharacterData() {
     try {
         const response = await fetch("https://crisordemparanormal.com/agente/stream/VDUU6qfqHMJPSbiAaFc9");
+
+        // Verifique se a resposta foi bem-sucedida
+        if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status}`);
+        }
+
         const html = await response.text();
 
         // Parse o HTML recebido
@@ -20,8 +26,10 @@ async function fetchCharacterData() {
         document.getElementById("vida").textContent = vida;
         document.getElementById("esforco").textContent = esforco;
         document.getElementById("foto").src = foto;
+
     } catch (error) {
         console.error("Erro ao buscar os dados:", error);
+        document.getElementById("nome").textContent = "Erro ao carregar os dados.";
     }
 }
 
